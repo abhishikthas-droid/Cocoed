@@ -15,9 +15,47 @@ const App: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [savedNotes, setSavedNotes] = useState<SavedNote[]>([]);
+  const [showOrb, setShowOrb] = useState(true);
+  const mainContentRef = React.useRef<HTMLDivElement>(null);
+  const heroContentRef = React.useRef<HTMLDivElement>(null);
+
+  // Custom slow scroll function
+  const slowScrollTo = (element: HTMLElement, duration: number) => {
+    const targetPosition = element.getBoundingClientRect().top + window.pageYOffset - 120; // Specific offset to match screenshot
+    const startPosition = window.pageYOffset;
+    const distance = targetPosition - startPosition;
+    let startTime: number | null = null;
+
+    const animation = (currentTime: number) => {
+      if (startTime === null) startTime = currentTime;
+      const timeElapsed = currentTime - startTime;
+      const run = ease(timeElapsed, startPosition, distance, duration);
+      window.scrollTo(0, run);
+      if (timeElapsed < duration) requestAnimationFrame(animation);
+    };
+
+    const ease = (t: number, b: number, c: number, d: number) => {
+      t /= d / 2;
+      if (t < 1) return (c / 2) * t * t + b;
+      t--;
+      return (-c / 2) * (t * (t - 2) - 1) + b;
+    };
+
+    requestAnimationFrame(animation);
+  };
 
   // Load saved notes from localStorage
   useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowOrb(false);
+    }, 2000);
+
+    const scrollTimer = setTimeout(() => {
+      if (heroContentRef.current) {
+        slowScrollTo(heroContentRef.current, 1500); // Slightly faster but still smooth
+      }
+    }, 2800);
+
     const saved = localStorage.getItem('cocoed_saved_notes');
     if (saved) {
       try {
@@ -97,17 +135,21 @@ const App: React.FC = () => {
             <div className="space-y-12">
               {/* Hero Section */}
               <div className="text-center pt-8 md:pt-12">
-                <GlowOrb />
-                <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight mb-4 bg-clip-text text-transparent bg-gradient-to-b from-slate-900 to-slate-500 dark:from-white dark:to-slate-400">
-                  AI-powered study notes
-                </h1>
-                <p className="text-slate-500 dark:text-slate-400 text-lg md:text-xl font-medium max-w-2xl mx-auto">
-                  For Kerala students <span className="text-primary opacity-80">(Class 8-12 • SCERT & CBSE)</span>
-                </p>
+                <div className={`orb-wrapper ${!showOrb ? 'collapsed animate-fade-out' : ''}`}>
+                  <GlowOrb />
+                </div>
+                <div ref={heroContentRef} className="space-y-4">
+                  <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight mb-4 bg-clip-text text-transparent bg-gradient-to-b from-slate-900 to-slate-500 dark:from-white dark:to-slate-400">
+                    AI-powered study notes
+                  </h1>
+                  <p className="text-slate-500 dark:text-slate-400 text-lg md:text-xl font-medium max-w-2xl mx-auto">
+                    For Kerala students <span className="text-primary opacity-80">(Class 8-12 • SCERT & CBSE)</span>
+                  </p>
+                </div>
               </div>
 
               {/* Generator UI */}
-              <div className="max-w-2xl mx-auto space-y-8">
+              <div ref={mainContentRef} className="max-w-2xl mx-auto space-y-8">
                 <InputCard onGenerate={handleGenerate} isLoading={isLoading} />
 
                 {error && (

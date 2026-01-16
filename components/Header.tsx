@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { AppView } from '../types';
 import ThemeToggle from './ThemeToggle';
-import { BookOpen, SavedSearch } from 'lucide-react';
+import { BookOpen } from 'lucide-react';
 
 interface HeaderProps {
   currentView: AppView;
@@ -19,20 +19,12 @@ const Header: React.FC<HeaderProps> = ({ currentView, onChangeView }) => {
   return (
     <header className="fixed top-0 left-0 w-full z-50 px-4 py-3 md:px-8">
       <div className="max-w-5xl mx-auto flex justify-between items-center glass rounded-2xl px-4 py-2 mt-4">
-        {/* Logo */}
         <button
           onClick={() => onChangeView(AppView.GENERATOR)}
-          className="flex items-center gap-2 text-xl font-bold tracking-tight text-primary dark:text-white hover:opacity-90 transition-opacity"
+          className="flex items-center gap-1 text-2xl font-bold tracking-tight hover:opacity-90 transition-opacity logo-glow"
         >
-          <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-            <div className="grid grid-cols-2 gap-1 p-1">
-              <div className="w-2 h-2 bg-white/40 rounded-sm"></div>
-              <div className="w-2 h-2 bg-white rounded-sm"></div>
-              <div className="w-2 h-2 bg-white rounded-sm"></div>
-              <div className="w-2 h-2 bg-white/40 rounded-sm"></div>
-            </div>
-          </div>
-          <span>cocoed <span className="text-primary dark:text-blue-400">AI</span></span>
+          <span className="text-slate-900 dark:text-white">cocoed</span>
+          <span className="text-primary dark:text-blue-400">AI</span>
         </button>
 
         {/* Right Section */}
@@ -44,8 +36,8 @@ const Header: React.FC<HeaderProps> = ({ currentView, onChangeView }) => {
                 key={item.value}
                 onClick={() => onChangeView(item.value)}
                 className={`text-sm font-semibold transition-all ${currentView === item.value
-                    ? 'text-primary dark:text-white border-b-2 border-primary dark:border-white'
-                    : 'text-gray-500 dark:text-gray-400 hover:text-primary dark:hover:text-white'
+                  ? 'text-primary dark:text-white border-b-2 border-primary dark:border-white'
+                  : 'text-gray-500 dark:text-gray-400 hover:text-primary dark:hover:text-white'
                   }`}
               >
                 {item.label}
@@ -82,8 +74,8 @@ const Header: React.FC<HeaderProps> = ({ currentView, onChangeView }) => {
                 setIsMenuOpen(false);
               }}
               className={`block w-full text-left px-4 py-2 text-sm ${currentView === item.value
-                  ? 'bg-primary/10 text-primary font-bold'
-                  : 'text-gray-700 dark:text-gray-200 hover:bg-black/5 dark:hover:bg-white/5'
+                ? 'bg-primary/10 text-primary font-bold'
+                : 'text-gray-700 dark:text-gray-200 hover:bg-black/5 dark:hover:bg-white/5'
                 }`}
             >
               {item.label}
