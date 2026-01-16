@@ -3,8 +3,10 @@ import Header from './components/Header';
 import InputCard from './components/InputCard';
 import ResultView from './components/ResultView';
 import SavedNotes from './components/SavedNotes';
+import GlowOrb from './components/GlowOrb';
 import { generateStudyNotes } from './services/geminiService';
 import { StudyNote, SavedNote, AppView } from './types';
+import { Sparkles, History, AlertCircle } from 'lucide-react';
 
 const App: React.FC = () => {
   // State
@@ -20,9 +22,6 @@ const App: React.FC = () => {
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
-        // Basic check to see if data matches new structure (has sections)
-        // If it's old data, it might not render correctly, but we'll load it to avoid data loss
-        // Ideally we would migrate data here.
         setSavedNotes(parsed);
       } catch (e) {
         console.error("Failed to parse saved notes", e);
@@ -40,7 +39,6 @@ const App: React.FC = () => {
       setCurrentNote(note);
     } catch (err: any) {
       console.error("Generation failed:", err);
-      // Display the actual error message if available, otherwise a generic one
       const errorMessage = err.message || "An unexpected error occurred.";
       setError(`Failed to generate notes: ${errorMessage}`);
     } finally {
@@ -51,7 +49,7 @@ const App: React.FC = () => {
   // Handler for saving notes
   const handleSave = () => {
     if (!currentNote) return;
-    
+
     const newSavedNote: SavedNote = {
       ...currentNote,
       id: Date.now().toString(),
@@ -66,7 +64,7 @@ const App: React.FC = () => {
   // Check if current note is already saved
   const isCurrentNoteSaved = React.useMemo(() => {
     if (!currentNote) return false;
-    return savedNotes.some(n => n.topic === currentNote.topic && n.timestamp === (currentNote as SavedNote).timestamp);
+    return savedNotes.some(n => n.topic === currentNote.topic && (n as any).timestamp === (currentNote as SavedNote).timestamp);
   }, [currentNote, savedNotes]);
 
   // Handle deleting a saved note
@@ -80,70 +78,89 @@ const App: React.FC = () => {
   const handleViewSaved = (note: SavedNote) => {
     setCurrentNote(note);
     setView(AppView.GENERATOR);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col font-sans">
+    <div className="min-h-screen bg-[#F8FAFC] dark:bg-[#0F172A] text-slate-900 dark:text-slate-100 flex flex-col font-sans transition-colors duration-300">
       <Header currentView={view} onChangeView={setView} />
 
-      {/* Hero Section Background */}
-      <div className="bg-[#3B82F6] h-64 md:h-80 w-full flex-shrink-0 pt-24 px-4">
-        <div className="max-w-3xl mx-auto text-center">
-          <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">
-            AI-powered study notes
-          </h1>
-          <p className="text-blue-100 text-sm md:text-base">
-            For Kerala students (Class 8-12 • SCERT & CBSE)
-          </p>
-        </div>
+      {/* Background Decorative Elements */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
+        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-400/10 blur-[120px] rounded-full"></div>
+        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-indigo-500/10 blur-[120px] rounded-full"></div>
       </div>
 
-      {/* Main Content Area */}
-      <main className="flex-1 w-full max-w-3xl mx-auto px-4 -mt-20 md:-mt-24 pb-12 z-0">
-        
-        {view === AppView.GENERATOR && (
-          <div className="space-y-6">
-            <InputCard onGenerate={handleGenerate} isLoading={isLoading} />
-
-            {error && (
-              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm text-center">
-                {error}
+      <main className="flex-1 relative z-10 pt-24 pb-20 px-4">
+        <div className="max-w-4xl mx-auto">
+          {view === AppView.GENERATOR && (
+            <div className="space-y-12">
+              {/* Hero Section */}
+              <div className="text-center pt-8 md:pt-12">
+                <GlowOrb />
+                <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight mb-4 bg-clip-text text-transparent bg-gradient-to-b from-slate-900 to-slate-500 dark:from-white dark:to-slate-400">
+                  AI-powered study notes
+                </h1>
+                <p className="text-slate-500 dark:text-slate-400 text-lg md:text-xl font-medium max-w-2xl mx-auto">
+                  For Kerala students <span className="text-primary opacity-80">(Class 8-12 • SCERT & CBSE)</span>
+                </p>
               </div>
-            )}
 
-            {currentNote && (
-              <ResultView 
-                note={currentNote} 
-                onSave={handleSave} 
-                isSaved={isCurrentNoteSaved} 
+              {/* Generator UI */}
+              <div className="max-w-2xl mx-auto space-y-8">
+                <InputCard onGenerate={handleGenerate} isLoading={isLoading} />
+
+                {error && (
+                  <div className="glass flex items-center gap-3 border-red-500/30 text-red-600 dark:text-red-400 px-6 py-4 rounded-2xl text-sm animate-in fade-in slide-in-from-top-4 duration-300">
+                    <AlertCircle className="w-5 h-5 flex-shrink-0" />
+                    <p className="font-medium">{error}</p>
+                  </div>
+                )}
+
+                {currentNote && (
+                  <div className="animate-in fade-in slide-in-from-bottom-8 duration-700">
+                    <ResultView
+                      note={currentNote}
+                      onSave={handleSave}
+                      isSaved={isCurrentNoteSaved}
+                    />
+                  </div>
+                )}
+
+                {!currentNote && !isLoading && !error && (
+                  <div className="flex flex-col items-center gap-4 text-slate-400 dark:text-slate-500 pt-8 opacity-60">
+                    <Sparkles className="w-8 h-8" />
+                    <p className="text-sm font-medium text-center max-w-sm">
+                      Try searching for topics like "Photosynthesis", "Trigonometry Basics", or "Indian Constitution".
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {view === AppView.SAVED && (
+            <div className="pt-8">
+              <SavedNotes
+                notes={savedNotes}
+                onDelete={handleDelete}
+                onView={handleViewSaved}
               />
-            )}
-            
-            {!currentNote && !isLoading && !error && (
-              <div className="text-center mt-12 text-gray-400">
-                <p>Try searching for topics like "Photosynthesis", "Trigonometry Basics", or "Indian Constitution".</p>
-              </div>
-            )}
-          </div>
-        )}
-
-        {view === AppView.SAVED && (
-          <div className="space-y-6">
-             {/* Spacer to push content down from the overlapping header style */}
-             <div className="h-4"></div> 
-             <SavedNotes 
-               notes={savedNotes} 
-               onDelete={handleDelete}
-               onView={handleViewSaved}
-             />
-          </div>
-        )}
-
+            </div>
+          )}
+        </div>
       </main>
 
-      {/* Simple Footer */}
-      <footer className="bg-white border-t border-gray-100 py-6 text-center text-gray-400 text-sm">
-        <p>&copy; {new Date().getFullYear()} Cocoed. Helping students learn smarter.</p>
+      {/* Modern Footer */}
+      <footer className="relative z-10 border-t border-slate-200 dark:border-white/5 py-10 px-4">
+        <div className="max-w-4xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6 text-slate-400 dark:text-slate-500 text-sm font-medium">
+          <p>&copy; {new Date().getFullYear()} Cocoed. Helping Kerala students learn smarter.</p>
+          <div className="flex items-center gap-6">
+            <span className="hover:text-primary transition-colors cursor-pointer">Privacy</span>
+            <span className="hover:text-primary transition-colors cursor-pointer">Terms</span>
+            <span className="px-3 py-1 bg-slate-100 dark:bg-white/5 rounded-full text-[10px] uppercase tracking-widest font-bold">Helping students</span>
+          </div>
+        </div>
       </footer>
     </div>
   );

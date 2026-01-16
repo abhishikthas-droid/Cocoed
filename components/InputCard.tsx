@@ -1,4 +1,5 @@
 import React, { useState, useRef } from 'react';
+import { Paperclip, Send, Loader2, X } from 'lucide-react';
 
 interface InputCardProps {
   onGenerate: (query: string, filesData?: string[]) => void;
@@ -7,7 +8,7 @@ interface InputCardProps {
 
 const InputCard: React.FC<InputCardProps> = ({ onGenerate, isLoading }) => {
   const [query, setQuery] = useState('');
-  const [attachedFiles, setAttachedFiles] = useState<{name: string, data: string}[]>([]);
+  const [attachedFiles, setAttachedFiles] = useState<{ name: string, data: string }[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -23,7 +24,7 @@ const InputCard: React.FC<InputCardProps> = ({ onGenerate, isLoading }) => {
     const files = e.target.files;
     if (files && files.length > 0) {
       const filePromises = Array.from(files).map(file => {
-        return new Promise<{name: string, data: string}>((resolve) => {
+        return new Promise<{ name: string, data: string }>((resolve) => {
           const reader = new FileReader();
           reader.onloadend = () => {
             resolve({
@@ -54,91 +55,76 @@ const InputCard: React.FC<InputCardProps> = ({ onGenerate, isLoading }) => {
   };
 
   return (
-    <div className="bg-white rounded-xl shadow-lg p-6 md:p-8 w-full">
-      <h2 className="text-sm md:text-base font-medium text-gray-500 mb-1">
+    <div className="glass-card rounded-3xl p-6 md:p-8 w-full border-white/20 dark:border-white/5 transition-all duration-300">
+      <h2 className="text-sm md:text-base font-medium text-gray-500 dark:text-gray-400 mb-4 ml-1">
         Enter topic or upload notes
       </h2>
       <form onSubmit={handleSubmit} className="space-y-4">
-        <div className="relative">
+        <div className="relative group">
           <input
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder={attachedFiles.length > 0 ? "Add instructions for the files (optional)..." : "e.g., Explain Ohm's Law for class 10"}
+            placeholder={attachedFiles.length > 0 ? "Add instructions for the files..." : "e.g., Explain Ohm's Law for class 10"}
             disabled={isLoading}
-            className="w-full bg-white border border-gray-200 rounded-lg px-4 py-3 text-black placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-shadow disabled:bg-gray-50 disabled:text-gray-500 pr-12"
+            className="w-full bg-white/50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-2xl px-5 py-4 text-black dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all disabled:opacity-50 pr-12 text-sm md:text-base"
           />
         </div>
 
         {/* File Previews */}
         {attachedFiles.length > 0 && (
-          <div className="space-y-2 max-h-40 overflow-y-auto custom-scrollbar">
+          <div className="flex flex-wrap gap-2 pt-2">
             {attachedFiles.map((file, index) => (
-              <div key={index} className="flex items-center justify-between bg-blue-50 px-3 py-2 rounded-lg border border-blue-100">
-                <div className="flex items-center gap-2 overflow-hidden">
-                  <svg className="w-5 h-5 text-blue-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                  </svg>
-                  <span className="text-sm text-blue-800 truncate">{file.name}</span>
-                </div>
-                <button 
-                  type="button" 
+              <div key={index} className="flex items-center gap-2 bg-primary/10 dark:bg-primary/20 px-3 py-1.5 rounded-full border border-primary/20 dark:border-primary/30">
+                <Paperclip className="w-3.5 h-3.5 text-primary dark:text-blue-400" />
+                <span className="text-xs font-medium text-primary dark:text-blue-200 truncate max-w-[120px]">{file.name}</span>
+                <button
+                  type="button"
                   onClick={() => removeFile(index)}
-                  className="text-blue-400 hover:text-blue-600 focus:outline-none p-1"
+                  className="text-primary/60 hover:text-primary dark:text-blue-400/60 dark:hover:text-blue-200 p-0.5"
                 >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                  </svg>
+                  <X className="w-3.5 h-3.5" />
                 </button>
               </div>
             ))}
           </div>
         )}
 
-        <div className="flex items-center justify-between pt-2">
+        <div className="flex items-center justify-between pt-4">
           <div className="flex flex-col">
-             <div className="flex items-center gap-2">
-                <button
-                    type="button"
-                    onClick={triggerFileInput}
-                    disabled={isLoading}
-                    className="flex items-center gap-2 text-gray-500 hover:text-blue-600 transition-colors focus:outline-none group"
-                    title="Upload files"
-                >
-                    <div className="p-2 rounded-full bg-gray-100 group-hover:bg-blue-50 transition-colors">
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
-                        </svg>
-                    </div>
-                    <span className="text-sm font-medium">Attach</span>
-                </button>
-                <input
-                    type="file"
-                    ref={fileInputRef}
-                    onChange={handleFileChange}
-                    className="hidden"
-                    multiple
-                />
-             </div>
-             <p className="text-xs text-gray-400 mt-1 ml-1">Only supported English texts or notes only</p>
+            <div className="flex items-center gap-4">
+              <button
+                type="button"
+                onClick={triggerFileInput}
+                disabled={isLoading}
+                className="flex items-center gap-2 text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-blue-400 transition-colors focus:outline-none group px-4 py-2 bg-gray-100 dark:bg-white/5 rounded-xl border border-transparent hover:border-primary/20"
+              >
+                <Paperclip className="w-5 h-5" />
+                <span className="text-sm font-semibold">Attach</span>
+              </button>
+              <input
+                type="file"
+                ref={fileInputRef}
+                onChange={handleFileChange}
+                className="hidden"
+                multiple
+              />
+            </div>
+            <p className="text-[10px] md:text-xs text-gray-400 dark:text-gray-500 mt-3 ml-1">Only supported English text or notes only</p>
           </div>
 
           <button
             type="submit"
             disabled={isLoading || (!query.trim() && attachedFiles.length === 0)}
-            className={`px-6 py-2.5 rounded-lg text-white font-medium text-sm transition-all ${
-              isLoading || (!query.trim() && attachedFiles.length === 0)
-                ? 'bg-blue-300 cursor-not-allowed'
-                : 'bg-blue-600 hover:bg-blue-700 shadow-md hover:shadow-lg'
-            }`}
+            className={`px-8 py-3 rounded-xl font-bold text-sm md:text-base transition-all transform active:scale-95 ${isLoading || (!query.trim() && attachedFiles.length === 0)
+                ? 'bg-gray-200 dark:bg-white/10 text-gray-400 cursor-not-allowed'
+                : 'bg-primary hover:bg-primary-dark text-white shadow-lg shadow-primary/20 hover:shadow-primary/40'
+              }`}
           >
             {isLoading ? (
               <span className="flex items-center gap-2">
-                <svg className="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-                Processing...
+                <Loader2 className="animate-spin h-5 w-5" />
+                Working...
               </span>
             ) : (
               'Generate Notes'
