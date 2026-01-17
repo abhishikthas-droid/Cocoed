@@ -20,7 +20,7 @@ const Header: React.FC<HeaderProps> = ({ currentView, onChangeView }) => {
     <header className="fixed top-0 left-0 w-full z-50 px-4 py-3 md:px-8">
       <div className="max-w-5xl mx-auto flex justify-between items-center glass rounded-2xl px-4 py-2 mt-4">
         <button
-          onClick={() => onChangeView(AppView.GENERATOR)}
+          onClick={() => window.location.href = 'https://cocoed-launching-page.vercel.app/'}
           className="flex items-center gap-1 text-2xl font-bold tracking-tight hover:opacity-90 transition-opacity logo-glow"
         >
           <span className="text-slate-900 dark:text-white">cocoed</span>
