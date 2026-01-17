@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { StudyNote, SectionType } from '../types';
-import { Printer, Save, Check, AlertTriangle, Lightbulb, Bookmark, FileText, ChevronRight } from 'lucide-react';
+import { Printer, Save, Check, AlertTriangle, Lightbulb, Bookmark, FileText, ChevronRight, Loader2 } from 'lucide-react';
 
 interface ResultViewProps {
   note: StudyNote;
@@ -9,12 +9,23 @@ interface ResultViewProps {
 }
 
 const ResultView: React.FC<ResultViewProps> = ({ note, onSave, isSaved }) => {
+  const [isSaving, setIsSaving] = useState(false);
 
   const handlePrint = () => {
     window.print();
   };
 
+  const handleSaveClick = async () => {
+    if (isSaved || isSaving) return;
+    setIsSaving(true);
+    // Simulate a brief delay for visual feedback
+    await new Promise(resolve => setTimeout(resolve, 800));
+    onSave();
+    setIsSaving(false);
+  };
+
   const getSectionStyles = (type: SectionType) => {
+    // ... lines 18-47
     switch (type) {
       case 'warning':
         return {
@@ -49,8 +60,8 @@ const ResultView: React.FC<ResultViewProps> = ({ note, onSave, isSaved }) => {
 
   return (
     <div className={`glass-card rounded-3xl overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500 print:shadow-none print:border-none transition-all duration-500 ${isSaved
-        ? 'border-green-500/50 dark:border-green-500/30 ring-1 ring-green-500/20 scale-[1.01] shadow-xl shadow-green-500/5'
-        : 'border-white/20 dark:border-white/5'
+      ? 'border-green-500/50 dark:border-green-500/30 ring-1 ring-green-500/20 scale-[1.01] shadow-xl shadow-green-500/10 animate-success'
+      : 'border-white/20 dark:border-white/5'
       }`}>
       <div className="p-6 md:p-8 flex justify-between items-center border-b border-gray-100 dark:border-white/5">
         <div className="flex items-center gap-4">
@@ -73,17 +84,24 @@ const ResultView: React.FC<ResultViewProps> = ({ note, onSave, isSaved }) => {
           </button>
 
           <button
-            onClick={onSave}
-            disabled={isSaved}
-            className={`flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-sm transition-all transform active:scale-95 ${isSaved
-              ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 cursor-default shadow-sm border border-green-200/50'
-              : 'bg-primary text-white hover:bg-primary-dark shadow-md shadow-primary/20 hover:shadow-primary/40'
+            onClick={handleSaveClick}
+            disabled={isSaved || isSaving}
+            className={`flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-sm transition-all transform active:scale-95 relative overflow-hidden ${isSaved
+              ? 'bg-green-500 text-white cursor-default shadow-lg shadow-green-500/20'
+              : isSaving
+                ? 'bg-primary/80 text-white cursor-wait'
+                : 'bg-primary text-white hover:bg-primary-dark shadow-md shadow-primary/20 hover:shadow-primary/40'
               }`}
           >
             {isSaved ? (
               <>
                 <Check className="w-4 h-4 animate-in zoom-in duration-300" />
-                <span>Saved</span>
+                <span className="animate-in slide-in-from-left-2 duration-300">Saved</span>
+              </>
+            ) : isSaving ? (
+              <>
+                <Loader2 className="w-4 h-4 animate-spin" />
+                <span>Saving...</span>
               </>
             ) : (
               <>
