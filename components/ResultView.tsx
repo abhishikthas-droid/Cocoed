@@ -48,7 +48,10 @@ const ResultView: React.FC<ResultViewProps> = ({ note, onSave, isSaved }) => {
   };
 
   return (
-    <div className="glass-card rounded-3xl overflow-hidden border-white/20 dark:border-white/5 animate-in fade-in slide-in-from-bottom-4 duration-500 print:shadow-none print:border-none">
+    <div className={`glass-card rounded-3xl overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500 print:shadow-none print:border-none transition-all duration-500 ${isSaved
+        ? 'border-green-500/50 dark:border-green-500/30 ring-1 ring-green-500/20 scale-[1.01] shadow-xl shadow-green-500/5'
+        : 'border-white/20 dark:border-white/5'
+      }`}>
       <div className="p-6 md:p-8 flex justify-between items-center border-b border-gray-100 dark:border-white/5">
         <div className="flex items-center gap-4">
           <div className="w-12 h-12 bg-primary/10 rounded-2xl flex items-center justify-center text-primary">
@@ -73,12 +76,21 @@ const ResultView: React.FC<ResultViewProps> = ({ note, onSave, isSaved }) => {
             onClick={onSave}
             disabled={isSaved}
             className={`flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-sm transition-all transform active:scale-95 ${isSaved
-                ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 cursor-default shadow-sm border border-green-200/50'
-                : 'bg-primary text-white hover:bg-primary-dark shadow-md shadow-primary/20 hover:shadow-primary/40'
+              ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 cursor-default shadow-sm border border-green-200/50'
+              : 'bg-primary text-white hover:bg-primary-dark shadow-md shadow-primary/20 hover:shadow-primary/40'
               }`}
           >
-            {isSaved ? <Check className="w-4 h-4" /> : <Save className="w-4 h-4" />}
-            {isSaved ? 'Saved' : 'Save Note'}
+            {isSaved ? (
+              <>
+                <Check className="w-4 h-4 animate-in zoom-in duration-300" />
+                <span>Saved</span>
+              </>
+            ) : (
+              <>
+                <Save className="w-4 h-4" />
+                <span>Save Note</span>
+              </>
+            )}
           </button>
         </div>
       </div>
