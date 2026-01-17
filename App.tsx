@@ -88,21 +88,33 @@ const App: React.FC = () => {
   const handleSave = () => {
     if (!currentNote) return;
 
+    const timestamp = Date.now();
     const newSavedNote: SavedNote = {
       ...currentNote,
-      id: Date.now().toString(),
-      timestamp: Date.now()
+      id: Math.random().toString(36).substring(2, 11),
+      timestamp: timestamp
     };
 
+    console.log("Saving note:", newSavedNote);
     const updatedNotes = [newSavedNote, ...savedNotes];
     setSavedNotes(updatedNotes);
     localStorage.setItem('cocoed_saved_notes', JSON.stringify(updatedNotes));
+
+    // Update currentNote to include the ID and timestamp so isSaved check passes
+    setCurrentNote(newSavedNote);
   };
 
   // Check if current note is already saved
   const isCurrentNoteSaved = React.useMemo(() => {
     if (!currentNote) return false;
-    return savedNotes.some(n => n.topic === currentNote.topic && (n as any).timestamp === (currentNote as SavedNote).timestamp);
+    // If it has an ID, it was either loaded from saved or just saved
+    if ((currentNote as SavedNote).id) return true;
+
+    return savedNotes.some(n =>
+      n.topic.toLowerCase() === currentNote.topic.toLowerCase() &&
+      n.sections.length === currentNote.sections.length &&
+      n.sections[0]?.content.substring(0, 50) === currentNote.sections[0]?.content.substring(0, 50)
+    );
   }, [currentNote, savedNotes]);
 
   // Handle deleting a saved note
