@@ -1,73 +1,91 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    
-    <!-- SEO & Metadata -->
-    <title>Cocoed - AI Study Notes for Kerala Students</title>
-    <meta name="description" content="Free AI-powered study platform for Kerala SCERT & CBSE students (Class 8-12). Convert textbook topics into simple, structured notes with step-by-step explanations." />
-    
-    <!-- Open Graph / Social Media -->
-    <meta property="og:title" content="Cocoed - AI Study Notes" />
-    <meta property="og:description" content="Turn complex textbook topics into simple study notes. Designed for Kerala Class 8-12 students." />
-    <meta property="og:type" content="website" />
-    <meta property="og:image" content="https://placehold.co/1200x630/3B82F6/ffffff?text=Cocoed+Study+Notes" />
-    
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-      tailwind.config = {
-        darkMode: 'class',
-        theme: {
-          extend: {
-            colors: {
-              primary: {
-                DEFAULT: '#3B82F6',
-                dark: '#2563EB',
-              }
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- SEO & Metadata -->
+  <title>Cocoed - AI Study Notes for Kerala Students</title>
+  <meta name="description"
+    content="Free AI-powered study platform for Kerala SCERT & CBSE students (Class 8-12). Convert textbook topics into simple, structured notes with step-by-step explanations." />
+
+  <!-- Open Graph / Social Media -->
+  <meta property="og:title" content="Cocoed - AI Study Notes" />
+  <meta property="og:description"
+    content="Turn complex textbook topics into simple study notes. Designed for Kerala Class 8-12 students." />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="https://placehold.co/1200x630/3B82F6/ffffff?text=Cocoed+Study+Notes" />
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            background: '#030712', // grayish-black
+            surface: '#111827', // darker gray
+            primary: {
+              DEFAULT: '#3B82F6',
+              dark: '#2563EB',
+              glow: 'rgba(59, 130, 246, 0.5)'
+            },
+            text: {
+              main: '#F9FAFB',
+              muted: '#9CA3AF'
             }
           }
         }
       }
-    </script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <script>
-      // Initial theme check
-      if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-        document.documentElement.classList.add('dark')
-      } else {
-        document.documentElement.classList.remove('dark')
-      }
-    </script>
-    <style>
+    }
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+    // Force dark mode logic or respect system preference but default to dark
+    if (localStorage.getItem('theme') === 'light') {
+      document.documentElement.classList.remove('dark')
+    } else {
+      document.documentElement.classList.add('dark')
+    }
+  </script>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+
+    /* Print Styles */
+    @media print {
       body {
-        font-family: 'Inter', sans-serif;
+        background-color: white;
       }
-      
-      /* Print Styles */
-      @media print {
-        body {
-          background-color: white;
-        }
-        .no-print, header, footer, button, input {
-          display: none !important;
-        }
-        main {
-          margin-top: 0 !important;
-          padding: 0 !important;
-          max-width: 100% !important;
-        }
-        .print-only-visible {
-          display: block !important;
-        }
-        /* Ensure notes expand fully */
-        .overflow-y-auto {
-          overflow: visible !important;
-          height: auto !important;
-          max-height: none !important;
-        }
+
+      .no-print,
+      header,
+      footer,
+      button,
+      input {
+        display: none !important;
       }
-    </style>
+
+      main {
+        margin-top: 0 !important;
+        padding: 0 !important;
+        max-width: 100% !important;
+      }
+
+      .print-only-visible {
+        display: block !important;
+      }
+
+      /* Ensure notes expand fully */
+      .overflow-y-auto {
+        overflow: visible !important;
+        height: auto !important;
+        max-height: none !important;
+      }
+    }
+  </style>
   <script type="importmap">
 {
   "imports": {
@@ -79,10 +97,13 @@
   }
 }
 </script>
-<link rel="stylesheet" href="/index.css">
+  <link rel="stylesheet" href="/index.css">
 </head>
-  <body class="bg-gray-50 text-gray-900">
-    <div id="root"></div>
+
+<body
+  class="bg-[#030712] text-gray-100 antialiased selection:bg-blue-500 selection:text-white transition-colors duration-300">
+  <div id="root"></div>
   <script type="module" src="/index.tsx"></script>
 </body>
+
 </html>

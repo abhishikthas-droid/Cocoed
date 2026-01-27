@@ -132,7 +132,7 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] dark:bg-[#0F172A] text-slate-900 dark:text-slate-100 flex flex-col font-sans transition-colors duration-300">
+    <div className="min-h-screen bg-background text-text-main flex flex-col font-sans transition-colors duration-300">
       <Header currentView={view} onChangeView={setView} />
 
       {/* Background Decorative Elements */}
