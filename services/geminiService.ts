@@ -19,7 +19,7 @@ export const generateStudyNotes = async (
   const ai = new GoogleGenAI({ apiKey: API_KEY });
 
   try {
-    const modelId = "gemini-3-flash-preview";
+    const modelId = "gemini-1.5-flash";
 
     const systemInstruction = `
 You are Cocoed AI, a calm and honest study assistant for Kerala students from Class 8 to 12 (+2),
