@@ -39,10 +39,19 @@ async function listModels() {
         // Documentation for @google/genai (new SDK) suggests usage like:
         const response = await ai.models.list();
 
-        console.log("Available Models:");
-        response.forEach(model => {
-            console.log(`- ${model.name} (Methods: ${model.supportedGenerationMethods?.join(', ')})`);
-        });
+        console.log("Raw Response:", JSON.stringify(response, null, 2));
+
+        // Try to handle if it's inside a property like 'models'
+        const models = response.models || response;
+
+        if (Array.isArray(models)) {
+            console.log("Available Models:");
+            models.forEach(model => {
+                console.log(`- ${model.name} (Methods: ${model.supportedGenerationMethods?.join(', ')})`);
+            });
+        } else {
+            console.log("Could not find array of models in response.");
+        }
 
     } catch (error) {
         console.error("Error listing models:", error);
